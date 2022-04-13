@@ -1,7 +1,3 @@
-from nba_api.stats.static import players
-from nba_api.stats.static import teams
-# from nba_api.stats.endpoints import leaguegamefinder
-# from nba_api.stats.endpoints import playercareerstats
 from nba_api.stats.endpoints import commonplayerinfo, commonallplayers, playercareerstats, playernextngames
 import time
 
@@ -31,6 +27,7 @@ def get_players_personal_information(players):
             print(f'F1 - Iteración N°:{a}')
 
     except:
+        print('TimeOut. Incomplete file will be saved anyways')
         pass
 
     all_players.drop(['DISPLAY_FIRST_LAST','DISPLAY_LAST_COMMA_FIRST', 'DISPLAY_FI_LAST', 'PLAYER_SLUG',
@@ -55,7 +52,9 @@ def get_players_career_stats(players):
             a += 1
             print(f'F2 - Iteración N°:{a}')
     except:
+        print('TimeOut. Incomplete file will be saved anyways')
         pass
+
 
     all_players.to_csv("nba_players_career_stats.csv")
     return all_players
@@ -75,11 +74,16 @@ def get_players_next_game(players):
                 a += 1
                 print(f'F3 - Iteración N°:{a}')
             except:
+                print(f'Player n°: {player} not found')
                 continue
     except:
+        print('TimeOut. Incomplete file will be saved anyways')
         pass
 
-    all_next_games.to_csv("nba_players_next_game.csv")
+    if all_next_games.empty:
+        print('Season just closed. There are no next games.')
+    else:
+        all_next_games.to_csv("nba_players_next_game.csv")
     return all_next_games
 
 players_next_game = get_players_next_game(players)
